@@ -5,6 +5,8 @@ local UniverseId = game.GameId
 local GameName = ""
 if UniverseId == 7326934954 then
     GameName = "99nights"
+elseif UniverseId == 9051406594 then
+    GameName = "duellinggrounds"
 end
 if GameName then
     loadstring(game:HttpGet("https://raw.githubusercontent.com/dunnook/RiceHub/refs/heads/main/"..GameName))()
