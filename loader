@@ -7,6 +7,8 @@ if UniverseId == 7326934954 then
     GameName = "99nights"
 elseif UniverseId == 9051406594 then
     GameName = "duellinggrounds"
+elseif UniverseId == 7028566528 then
+    GameName = "basketballzero"
 end
 if GameName then
     loadstring(game:HttpGet("https://raw.githubusercontent.com/dunnook/RiceHub/refs/heads/main/"..GameName))()
