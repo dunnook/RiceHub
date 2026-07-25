@@ -1,0 +1,2 @@
+--Gakuran
+loadstring(game:HttpGet("https://api.luarmor.net/files/v4/loaders/4769c6d338b7de772b0e74685a74d73c.lua"))()
