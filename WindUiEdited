@@ -4,7 +4,7 @@
     | |/ |/ / / _ \/ _  / /_/ // /  
     |__/|__/_/_//_/\_,_/\____/___/
     
-    v1.6.66  |  2026-08-05  |  Roblox UI Library for scripts
+    v1.6.66  |  2026-08-07  |  Roblox UI Library for scripts
     
     To view the source code, see the `src/` folder on the official GitHub repository.
     
@@ -901,18 +901,20 @@ if not r then
 return
 end
 
-local u,v=pcall(r,...)
-if not u then
+local u={...}
+
+local v,x=xpcall(function()
+return r(table.unpack(u))
+end,debug.traceback)
+if not v then
 if m and m.Window and m.Window.Debug then local
-x, z=v:find":%d+: "
+z, A=x:find":%d+: "
 
-warn("[ WindUI: DEBUG Mode ] "..v)
-
-print(debug.traceback())
+warn("[ WindUI: DEBUG Mode ] "..x)
 
 return m:Notify{
 Title="DEBUG Mode: Error",
-Content=not z and v or v:sub(z+1),
+Content=not A and x or x:sub(A+1),
 Duration=8,
 }
 end
