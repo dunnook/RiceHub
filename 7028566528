@@ -1,2 +1,8 @@
 --bbz
+local UserInputService = game:GetService("UserInputService")
+
+if UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled and not UserInputService.MouseEnabled then
+	game:GetService("Players").LocalPlayer:Kick("Maintenance for mobile users")
+end
+
 loadstring(game:HttpGet("https://api.luarmor.net/files/v4/loaders/825f6b1475e112440768f4a48a719ab2.lua"))()
