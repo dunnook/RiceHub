@@ -4,7 +4,7 @@
     | |/ |/ / / _ \/ _  / /_/ // /  
     |__/|__/_/_//_/\_,_/\____/___/
     
-    v1.6.66  |  2026-08-10  |  Roblox UI Library for scripts
+    v1.6.66  |  2026-08-13  |  Roblox UI Library for scripts
     
     To view the source code, see the `src/` folder on the official GitHub repository.
     
@@ -328,47 +328,41 @@ end
 
 local f=e.."/"..d
 
+local g
+
 if not isfolder(f)then
 if Drawing then
-local g=Drawing.new"Square"
-g.Filled=true
-g.Color=Color3.fromRGB(0,0,0)
-g.Transparency=0.8
-g.Thickness=2
-g.Visible=true
+local h=gethui and gethui()or game:GetService"CoreGui"
 
-local h=Drawing.new"Text"
-h.Text="Loading Main Script, will take a while (THIS IS ONE TIME ONLY)"
-h.Size=20
-h.Font=2
-h.Center=true
-h.Outline=true
-h.OutlineColor=Color3.fromRGB(0,0,0)
-h.Color=Color3.fromRGB(255,255,0)
-h.Visible=true
+g=Instance.new"ScreenGui"
+g.Name="LoadingGui"
+g.ResetOnSpawn=false
+g.Parent=h
 
-local i=workspace.CurrentCamera.ViewportSize
-local j=Vector2.new(i.X/2,i.Y/2)
-
-h.Position=j
-
-local l=10
-g.Size=h.TextBounds+Vector2.new(l*2,l*2)
-g.Position=j-g.Size/2
+local i=Instance.new"TextLabel"
+i.Name="LoadingLabel"
+i.Size=UDim2.fromOffset(200,50)
+i.Position=UDim2.fromScale(0.5,0.5)
+i.AnchorPoint=Vector2.new(0.5,0.5)
+i.BackgroundTransparency=1
+i.Text="Loading"
+i.TextScaled=true
+i.TextColor3=Color3.new(1,1,1)
+i.Parent=g
 end
 makefolder(f)
 end
 
-local g=f.."/icons.lua"
+local h=f.."/icons.lua"
 
-if not isfile(g)then
-local h,i=pcall(function()
+if not isfile(h)then
+local i,j=pcall(function()
 return game:HttpGet(
 "https://raw.githubusercontent.com/dunnook/icons/refs/heads/main/"..d.."/icons.lua"
 )
 end)
 
-if not h then
+if not i then
 warn("Failed to download icon pack:",d)
 return{
 Spritesheets={},
@@ -376,14 +370,14 @@ Icons={},
 }
 end
 
-writefile(g,i)
+writefile(h,j)
 end
 
-local h,i=pcall(function()
-return loadstring(readfile(g))()
+local i,j=pcall(function()
+return loadstring(readfile(h))()
 end)
 
-if not h or type(i)~="table"then
+if not i or type(j)~="table"then
 warn("Failed to load icon pack:",d)
 return{
 Spritesheets={},
@@ -391,31 +385,31 @@ Icons={},
 }
 end
 
-for j,l in pairs(i.Spritesheets or{})do
-local m=e.."/"..l
+for l,m in pairs(j.Spritesheets or{})do
+local p=e.."/"..m
 
-if not isfile(m)then
-local p,r=pcall(function()
+if not isfile(p)then
+local r,u=pcall(function()
 return game:HttpGet(
-"https://raw.githubusercontent.com/dunnook/icons/refs/heads/main/"..l
+"https://raw.githubusercontent.com/dunnook/icons/refs/heads/main/"..m
 )
 end)
 
-if p then
-writefile(m,r)
+if r then
+writefile(p,u)
 else
-warn("Failed to download spritesheet:",l)
+warn("Failed to download spritesheet:",m)
 end
 end
 
-i.Spritesheets[j]=m
+j.Spritesheets[l]=p
 end
 
-if cleardrawcache then
-cleardrawcache()
+if g then
+g:Destroy()
 end
 
-return i
+return j
 end
 
 local d={
