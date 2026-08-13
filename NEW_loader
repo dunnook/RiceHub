@@ -1,5 +1,4 @@
 return function(SERVICE, KEY)
-    print("LOADING", SERVICE, KEY)
     if not getgenv then
         function getgenv() return _G end
     end
