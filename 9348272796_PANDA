@@ -1,0 +1,2 @@
+--survive zombie arena
+loadstring(game:HttpGet("https://vss.pandauth.com/kv/61321ce102ac42c0"))()
