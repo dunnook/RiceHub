@@ -1,1 +1,8 @@
-
+return function(SERVICE)
+    local UniverseId = game.GameId
+    local ServiceString = SERVICE ~= nil and "_"..tostring(SERVICE) or ""
+    local try, err = pcall(function()loadstring(game:HttpGet("https://raw.githubusercontent.com/dunnook/SpectacleHub/refs/heads/main/"..tostring(UniverseId)..ServiceString))() end)
+    if try then
+        print(err)
+    end
+end
