@@ -1,2 +1,3 @@
 --Gakuran
+print("LOADDDDING")
 loadstring(game:HttpGet("https://vss.pandauth.com/kv/660628026f8d4aec"))()
