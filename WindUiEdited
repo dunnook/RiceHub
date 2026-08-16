@@ -4,7 +4,7 @@
     | |/ |/ / / _ \/ _  / /_/ // /  
     |__/|__/_/_//_/\_,_/\____/___/
     
-    v1.6.66  |  2026-08-13  |  Roblox UI Library for scripts
+    v1.6.66  |  2026-08-15  |  Roblox UI Library for scripts
     
     To view the source code, see the `src/` folder on the official GitHub repository.
     
@@ -8100,6 +8100,7 @@ __type="Keybind",
 Title=aj.Title or"Keybind",
 Desc=aj.Desc or nil,
 Locked=aj.Locked or false,
+FireOnBind=aj.FireOnBind,
 LockedTitle=aj.LockedTitle,
 Value=NormalizeKeyCode(aj.Value)or"F",
 Callback=aj.Callback or function()end,
@@ -8231,6 +8232,10 @@ ak.Picking=false
 ak.UIElements.Keybind.Frame.Frame.TextLabel.Text=aq
 ak.Value=aq
 
+if ak.FireOnBind then
+ad.SafeCallback(ak.Callback,aq)
+end
+
 ao:Disconnect()
 an:Disconnect()
 end
@@ -8248,6 +8253,9 @@ if not am then
 return
 end
 if ak.Picking then
+return
+end
+if ak.FireOnBind then
 return
 end
 
@@ -11805,6 +11813,12 @@ break
 end
 end
 
+if av.ElementFrame then
+function av.SetVisible(ax,ay)
+av.ElementFrame.Visible=ay
+end
+end
+
 if aw then
 av.ElementFrame=aw.UIElements.Main
 function av.SetTitle(ax,ay)
@@ -11829,6 +11843,9 @@ table.remove(ak.AllElements,at.GlobalIndex)
 table.remove(aa.Elements,at.Index)
 table.remove(ap.Elements,at.Index)
 aa:UpdateAllElementShapes(aa)
+end
+function av.SetVisible(ax,ay)
+av.ElementFrame.Visible=ay
 end
 end
 
