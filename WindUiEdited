@@ -4,7 +4,7 @@
     | |/ |/ / / _ \/ _  / /_/ // /  
     |__/|__/_/_//_/\_,_/\____/___/
     
-    v1.6.66  |  2026-08-20  |  Roblox UI Library for scripts
+    v1.6.66  |  2026-08-22  |  Roblox UI Library for scripts
     
     To view the source code, see the `src/` folder on the official GitHub repository.
     
@@ -7619,7 +7619,7 @@ local d=math.clamp(
 1
 )
 aA=CalculateValue(al.Value.Min+d*(al.Value.Max-al.Value.Min))
-aA=math.clamp(aA,al.Value.Min or 0,al.Value.Max or 100)
+aA=math.clamp(aA or al.Value.Min or 0,al.Value.Min or 0,al.Value.Max or 100)
 
 if aA~=aq then
 ag(al.UIElements.SliderIcon.Frame,0.05,{Size=UDim2.new(d,0,1,0)}):Play()
@@ -7686,7 +7686,7 @@ end
 end
 end)
 else
-aA=math.clamp(aA,al.Value.Min or 0,al.Value.Max or 100)
+aA=math.clamp(aA or al.Value.Min or 0,al.Value.Min or 0,al.Value.Max or 100)
 
 local b=math.clamp(
 (aA-(al.Value.Min or 0))/((al.Value.Max or 100)-(al.Value.Min or 0)),
@@ -8424,6 +8424,7 @@ ap.DisplayIndices={}
 ap.SelectedLookup={}
 ap.LockedLookup={}
 ap.Search=""
+ap.SelectedIndex=nil
 
 ap.UIElements.Menu=aj.NewRoundFrame(
 aq.MenuCorner,
@@ -8633,19 +8634,106 @@ aw.AbsolutePosition.Y
 )
 end
 
+
+
+
+
+
+
+local function RebuildSelectedLookupFromValue()
+table.clear(ap.SelectedLookup)
+
+if ap.Multi then
+local aw={}
+
+if typeof(ap.Value)=="table"then
+for ax,ay in next,ap.Value do
+for az,aA in next,ap.Values do
+if not aw[az]then
+local aB=false
+
+if aA==ay then
+aB=true
+elseif typeof(aA)=="table"
+and typeof(ay)~="table"
+and aA.Title==ay
+then
+aB=true
+elseif typeof(aA)~="table"
+and typeof(ay)=="table"
+and aA==ay.Title
+then
+aB=true
+end
+
+if aB then
+aw[az]=true
+ap.SelectedLookup[az]=true
+break
+end
+end
+end
+end
+end
+else
+ap.SelectedIndex=nil
+
+if ap.Value~=nil then
+for aw,ax in next,ap.Values do
+if ax==ap.Value then
+ap.SelectedIndex=aw
+break
+end
+
+if typeof(ax)=="table"
+and typeof(ap.Value)~="table"
+and ax.Title==ap.Value
+then
+ap.SelectedIndex=aw
+break
+end
+
+if typeof(ax)~="table"
+and typeof(ap.Value)=="table"
+and ax==ap.Value.Title
+then
+ap.SelectedIndex=aw
+break
+end
+end
+end
+end
+end
+
+local function RebuildValueFromSelection()
+if not ap.Multi then
+return
+end
+
+local aw={}
+
+for ax,ay in next,ap.Values do
+if ap.SelectedLookup[ax]then
+aw[#aw+1]=ay
+end
+end
+
+ap.Value=aw
+end
+
 function au.Display(aw)
 local ax=ap.Values or{}
 
 local ay=""
 
 if ap.Multi then
-for az,aA in ipairs(ax)do
+for az,aA in next,ax do
+if ap.SelectedLookup[az]then
 local aB=
 typeof(aA)=="table"
 and aA.Title
 or aA
 
-if ap.SelectedLookup[aB]then
 ay=
 ay
 ..tostring(aB)
@@ -9122,25 +9210,17 @@ if aB==nil then
 return
 end
 
-local b=
-typeof(aB)=="table"
-and aB.Title
-or aB
-
 if ap.Multi then
-
 if not aw.Selected then
+if ap.SelectedLookup[aA]then
+return
+end
+
 aw.Selected=true
 
-table.insert(
-ap.Value,
-aB
-)
-
 ap.SelectedLookup[
-b
+aA
 ]=true
-
 else
 if not ap.AllowNone
 and#ap.Value==1
@@ -9150,41 +9230,27 @@ end
 
 aw.Selected=false
 
-for d,f in next,ap.Value do
-local g=
-typeof(f)=="table"
-and f.Title
-or f
-
-if g==b then
-table.remove(
-ap.Value,
-d
-)
-
-break
-end
-end
-
 ap.SelectedLookup[
-b
+aA
 ]=nil
 end
 
-ApplyTabVisuals(aw)
-
-else
-
-local d=
-ap.SelectedTab
-
-if d
-and d~=aw
-then
-d.Selected=false
+RebuildValueFromSelection()
 
 ApplyTabVisuals(
-d
+aw
+)
+else
+local b=
+ap.SelectedTab
+
+if b
+and b~=aw
+then
+b.Selected=false
+
+ApplyTabVisuals(
+b
 )
 end
 
@@ -9192,6 +9258,9 @@ aw.Selected=true
 
 ap.SelectedTab=
 aw
+
+ap.SelectedIndex=
+aA
 
 ap.Value=
 aB
@@ -9205,7 +9274,6 @@ Callback()
 end
 )
 )
-
 elseif ar=="Menu"then
 table.insert(
 aw.Connections,
@@ -9357,7 +9425,7 @@ aA
 and az.Locked==true
 )
 or ap.LockedLookup[
-aw.Name
+ay
 ]==true
 
 local aB=
@@ -9392,19 +9460,12 @@ or"None"
 if ap.Multi then
 aw.Selected=
 ap.SelectedLookup[
-aw.Name
+ay
 ]==true
 else
-local h=
-ap.Value
-
-local i=
-typeof(h)=="table"
-and h.Title
-or h
-
 aw.Selected=
-i==aw.Name
+ap.SelectedIndex
+==ay
 end
 
 local h=
@@ -9642,9 +9703,22 @@ ap.LockedLookup
 )
 
 for ay,az in next,ax do
+for aA,aB in next,ap.Values do
+local b=
+typeof(aB)=="table"
+and aB.Title
+or aB
+
+local d=
+aB==az
+or b==az
+
+if d then
 ap.LockedLookup[
-az
+aA
 ]=true
+end
+end
 end
 
 for ay,az in next,ap.Tabs do
@@ -9660,7 +9734,7 @@ and aA.Locked==true
 az.Locked=
 aB
 or ap.LockedLookup[
-az.Name
+az.ValueIndex
 ]==true
 
 ApplyTabVisuals(
@@ -9668,7 +9742,6 @@ az
 )
 end
 end
-
 
 av:GetPropertyChangedSignal
 "CanvasPosition"
@@ -9678,7 +9751,7 @@ UpdateVisibleItems()
 end
 end)
 
-function au.Refresh(aw,ax)
+function au.Refresh(aw,ax,ay)
 if ao.Window.Destroyed then
 return
 end
@@ -9689,67 +9762,30 @@ ax or{}
 if ap.Multi
 and typeof(ap.Value)=="string"
 then
-local ay=
+local az=
 ap.Value
 
-for az,aA in next,ap.Values do
-local aB=
-typeof(aA)=="table"
-
-if not aB
-or aA.Type~="Divider"
-then
-local b=
-aB
-and aA.Title
-or aA
-
-if b==ay then
 ap.Value={
-aA
+az
 }
-
-break
-end
-end
-end
 end
 
-table.clear(
-ap.SelectedLookup
-)
-
-if ap.Multi
-and typeof(ap.Value)=="table"
-then
-for ay,az in next,ap.Value do
-local aA=
-typeof(az)=="table"
-and az.Title
-or az
-
-ap.SelectedLookup[
-aA
-]=true
-end
-end
-
-RebuildDisplayIndices()
+RebuildSelectedLookupFromValue()
 
 if ap.SearchBarEnabled
-and not SearchLabel
+and not ap.SearchLabel
 then
-SearchLabel=ai(
+ap.SearchLabel=ai(
 "Search...",
 "search",
 ap.UIElements.Menu,
 nil,
 
-function(ay)
+function(az)
 ap.Search=
 string.lower(
 tostring(
-ay or""
+az or""
 )
 )
 
@@ -9769,7 +9805,7 @@ end,
 true
 )
 
-SearchLabel.Size=
+ap.SearchLabel.Size=
 UDim2.new(
 1,
 0,
@@ -9777,18 +9813,20 @@ UDim2.new(
 aq.SearchBarHeight
 )
 
-SearchLabel.Position=
+ap.SearchLabel.Position=
 UDim2.new(0,0,0,0)
 
-SearchLabel.Name=
+ap.SearchLabel.Name=
 "SearchBar"
 end
+
+RebuildDisplayIndices()
 
 if ap.Opened then
 UpdateVisibleItems()
 else
-for ay,az in next,ap.TabPool do
-az.UIElements.TabItem.Visible=
+for az,aA in next,ap.TabPool do
+aA.UIElements.TabItem.Visible=
 false
 end
 
@@ -9818,7 +9856,11 @@ ap.UIElements.MenuCanvas.Size.Y.Scale,
 ap.UIElements.MenuCanvas.Size.Y.Offset
 )
 
+if(ay==true or ay==nil)
+and not ap._Initializing
+then
 Callback()
+end
 end
 
 function au.Select(aw,ax)
@@ -9838,9 +9880,13 @@ ap.Values
 )
 end
 
+ap._Initializing=true
+
 au:Refresh(
 ap.Values or{}
 )
+
+ap._Initializing=false
 
 RecalculateCanvasSize()
 RecalculateListSize()
@@ -9884,6 +9930,7 @@ ImageTransparency=0,
 Enum.EasingStyle.Quart,
 Enum.EasingDirection.Out
 )
+
 ax:Play()
 
 ap.Opened=true
